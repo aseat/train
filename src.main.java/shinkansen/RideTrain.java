@@ -64,8 +64,8 @@ public class RideTrain {
 			sql = "SELECT name,id,to_char(" + departureStationRome + "_departure,'HH24:MI')AS departure_time, to_char("
 					+ arriveStationRome + "_arrive,'HH24:MI') AS arrive_time FROM shinkansen.tokaido_" + direction
 					+ "_train" + " WHERE " + departureStationRome + "_departure IS NOT NULL AND " + arriveStationRome
-					+ "_arrive IS NOT NULL AND" + "'" + timeFormat + "' <" + departureStationRome + "_departure AND "
-					+ departureStationRome + "_departure <'" + (time.getHour() + 1) + ":59' ORDER BY "
+					+ "_arrive IS NOT NULL AND" + "'" + timeFormat + "' <=" + departureStationRome + "_departure AND "
+					+ departureStationRome + "_departure <='" + (time.getHour() + 1) + ":59' ORDER BY "
 					+ departureStationRome + "_departure;";
 
 			ResultSet trainResultSet = statement.executeQuery(sql);
@@ -186,7 +186,7 @@ public class RideTrain {
 	}
 
 	private static String getFormatTime(LocalDateTime time) {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:MM");
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");
 		return format.format(time);
 	}
 }
