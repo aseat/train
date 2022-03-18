@@ -6,187 +6,185 @@ import java.sql.Statement;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.InputMismatchException;
-import java.util.List;
 
 import connect.ConnectDatabase;
 
 public class RideTrain {
 
-	public static void main(String[] args) throws Exception {
-		ConnectDatabase connect = new ConnectDatabase();
+    public static void main(String[] args) throws Exception {
+        ConnectDatabase connect = new ConnectDatabase();
 
-		Statement statement = connect.getStatement();
+        Statement statement = connect.getStatement();
 
-		String sql = "SELECT * FROM shinkansen.station";
+        String sql = "SELECT * FROM shinkansen.station";
 
-		ResultSet stationResultSet = statement.executeQuery(sql);
-		try {
-			String direction = getValidatedTrainDirection();
+        ResultSet stationResultSet = statement.executeQuery(sql);
+        try {
+            String direction = getValidatedTrainDirection();
 
-			System.out.println("");
+            System.out.println("");
 
-			while (stationResultSet.next()) {
-				System.out.print(stationResultSet.getInt("id") + "." + stationResultSet.getString("name") + " ");
-			}
-			System.out.println("");
-			System.out.print("èoî≠ínÇî‘çÜÇ≈ëIÇÒÇ≈ÇƒÇ≠ÇæÇ≥Ç¢ÅB:");
-			int inputDepartureStation = getValidatedStationNumber();
-			stationResultSet.absolute(inputDepartureStation);
-			String departureStation = stationResultSet.getString("name");
-			String departureStationRome = stationResultSet.getString("name_rome");
+            while (stationResultSet.next()) {
+                System.out.print(stationResultSet.getInt("id") + "." + stationResultSet.getString("name") + " ");
+            }
+            System.out.println("");
+            System.out.print("Âá∫Áô∫Âú∞„ÇíÁï™Âè∑„ÅßÈÅ∏„Çì„Åß„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ:");
+            int inputDepartureStation = getValidatedStationNumber();
+            stationResultSet.absolute(inputDepartureStation);
+            String departureStation = stationResultSet.getString("name");
+            String departureStationRome = stationResultSet.getString("name_rome");
 
-			System.out.println("");
-			stationResultSet.absolute(0);
+            System.out.println("");
+            stationResultSet.absolute(0);
 
-			while (stationResultSet.next()) {
-				System.out.print(stationResultSet.getInt("id") + "." + stationResultSet.getString("name") + " ");
-			}
-			System.out.println("");
-			System.out.print("ñ⁄ìIínÇî‘çÜÇ≈ëIÇÒÇƒÇ≠ÇæÇ≥Ç¢ÅB:");
-			int inputArriveStation = getValidatedStationNumber();
-			validatedStationDirection(direction, inputDepartureStation, inputArriveStation);
-			stationResultSet.absolute(inputArriveStation);
-			String arriveStation = stationResultSet.getString("name");
-			String arriveStationRome = stationResultSet.getString("name_rome");
+            while (stationResultSet.next()) {
+                System.out.print(stationResultSet.getInt("id") + "." + stationResultSet.getString("name") + " ");
+            }
+            System.out.println("");
+            System.out.print("ÁõÆÁöÑÂú∞„ÇíÁï™Âè∑„ÅßÈÅ∏„Çì„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ:");
+            int inputArriveStation = getValidatedStationNumber();
+            validatedStationDirection(direction, inputDepartureStation, inputArriveStation);
+            stationResultSet.absolute(inputArriveStation);
+            String arriveStation = stationResultSet.getString("name");
+            String arriveStationRome = stationResultSet.getString("name_rome");
 
-			System.out.println("");
+            System.out.println("");
 
-			int hour = getValidatedDepartureHour();
-			System.out.println("");
-			int minute = getValidatedDepartureMinute();
-			System.out.println("");
-			LocalDateTime time = getValidatedDepartureTime(hour, minute);
-			String timeFormat = getFormatTime(time);
+            int hour = getValidatedDepartureHour();
+            System.out.println("");
+            int minute = getValidatedDepartureMinute();
+            System.out.println("");
+            LocalDateTime time = getValidatedDepartureTime(hour, minute);
+            String timeFormat = getFormatTime(time);
 
-			sql = "SELECT name,id,to_char(" + departureStationRome + "_departure,'HH24:MI')AS departure_time, to_char("
-					+ arriveStationRome + "_arrive,'HH24:MI') AS arrive_time FROM shinkansen.tokaido_" + direction
-					+ "_train" + " WHERE " + departureStationRome + "_departure IS NOT NULL AND " + arriveStationRome
-					+ "_arrive IS NOT NULL AND" + "'" + timeFormat + "' <=" + departureStationRome + "_departure AND "
-					+ departureStationRome + "_departure <='" + (time.getHour() + 1) + ":59' ORDER BY "
-					+ departureStationRome + "_departure;";
+            sql = "SELECT name,id,destination,to_char(" + departureStationRome + "_departure,'HH24:MI')AS departure_time, to_char("
+                    + arriveStationRome + "_arrive,'HH24:MI') AS arrive_time FROM shinkansen.tokaido_" + direction
+                    + "_train" + " WHERE " + departureStationRome + "_departure IS NOT NULL AND " + arriveStationRome
+                    + "_arrive IS NOT NULL AND" + "'" + timeFormat + "' <=" + departureStationRome + "_departure AND "
+                    + departureStationRome + "_departure <='" + (time.getHour() + 1) + ":59' ORDER BY "
+                    + departureStationRome + "_departure;";
 
-			ResultSet trainResultSet = statement.executeQuery(sql);
+            ResultSet trainResultSet = statement.executeQuery(sql);
 
-			while (trainResultSet.next()) {
-				System.out.println(trainResultSet.getString("name") + trainResultSet.getInt("id") + "çÜÅF"
-						+ departureStation + "î≠ " + trainResultSet.getString("departure_time") + " Å® " + arriveStation
-						+ "íÖ " + trainResultSet.getString("arrive_time"));
-			}
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-		}
-		connect.closeConnection();
+            while (trainResultSet.next()) {
+                System.out.println(trainResultSet.getString("name") + trainResultSet.getInt("id") + "Âè∑ "
+                        + trainResultSet.getString("destination") + "Ë°å Ôºö"
+                        + departureStation + "Áô∫ " + trainResultSet.getString("departure_time") + " ‚Üí " + arriveStation
+                        + "ÁùÄ " + trainResultSet.getString("arrive_time"));
+            }
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        connect.closeConnection();
 
-	}
+    }
 
-	private static Integer getInputValue() throws Exception {
-		try {
-			return new java.util.Scanner(System.in).nextInt();
-		} catch (InputMismatchException exception) {
-			System.out.println("êîéöÇ≈ì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB");
-			System.exit(0);
-		}
-		return null;
-	}
+    private static Integer getInputValue() throws Exception {
+        try {
+            return new java.util.Scanner(System.in).nextInt();
+        } catch (InputMismatchException exception) {
+            System.out.println("Êï∞Â≠ó„ÅßÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static Integer getValidatedStationNumber() throws Exception {
-		try {
-			int stationNumber = getInputValue();
-			if (stationNumber < 1 || 17 < stationNumber) {
-				throw new IllegalArgumentException();
-			}
+    private static Integer getValidatedStationNumber() throws Exception {
+        try {
+            int stationNumber = getInputValue();
+            if (stationNumber < 1 || 17 < stationNumber) {
+                throw new IllegalArgumentException();
+            }
 
-			return stationNumber;
-		} catch (IllegalArgumentException exception) {
-			System.out.println("1Å`17ÇÃîÕàÕÇ≈ì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB");
-			System.exit(0);
-		}
-		return null;
-	}
+            return stationNumber;
+        } catch (IllegalArgumentException exception) {
+            System.out.println("1ÔΩû17„ÅÆÁØÑÂõ≤„ÅßÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static void validatedStationDirection(String direction, int departureStation, int arriveStation) {
-		try {
-			if ("up".equals(direction)) {
-				if (arriveStation > departureStation) {
-					throw new IllegalArgumentException();
-				}
-			} else if ("down".equals(direction)) {
-				if (arriveStation < departureStation) {
-					throw new IllegalArgumentException();
-				}
-			}
-		} catch (IllegalArgumentException exception) {
-			System.out.println("èoî≠ínÇ©ÇÁÇÃï˚å¸Ç™ãtÇ≈Ç∑ÅB");
-			System.exit(0);
-		}
-	}
+    private static void validatedStationDirection(String direction, int departureStation, int arriveStation) {
+        try {
+            if ("up".equals(direction)) {
+                if (arriveStation > departureStation) {
+                    throw new IllegalArgumentException();
+                }
+            } else if ("down".equals(direction)) {
+                if (arriveStation < departureStation) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        } catch (IllegalArgumentException exception) {
+            System.out.println("Âá∫Áô∫Âú∞„Åã„Çâ„ÅÆÊñπÂêë„ÅåÈÄÜ„Åß„Åô„ÄÇ");
+            System.exit(0);
+        }
+    }
 
-	private static String getValidatedTrainDirection() throws Exception {
-		try {
-			System.out.println("1.è„ÇËï˚ñ  2.â∫ÇËï˚ñ ");
-			System.out.print("è„ÇËï˚ñ (ìåãûï˚ñ )Ç©â∫ÇËï˚ñ (êVëÂç„ï˚ñ )Ç©î‘çÜÇ≈ì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅBÅF");
-			int DirectionNumber = getInputValue();
-			if (DirectionNumber < 1 || 2 < DirectionNumber) {
-				throw new IllegalArgumentException();
-			}
-			if (DirectionNumber == 1) {
-				return "up";
-			} else {
-				return "down";
-			}
+    private static String getValidatedTrainDirection() throws Exception {
+        try {
+            System.out.println("1.‰∏ä„ÇäÊñπÈù¢ 2.‰∏ã„ÇäÊñπÈù¢");
+            System.out.print("‰∏ä„ÇäÊñπÈù¢(Êù±‰∫¨ÊñπÈù¢)„Åã‰∏ã„ÇäÊñπÈù¢(Êñ∞Â§ßÈò™ÊñπÈù¢)„ÅãÁï™Âè∑„ÅßÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇÔºö");
+            int DirectionNumber = getInputValue();
+            if (DirectionNumber < 1 || 2 < DirectionNumber) {
+                throw new IllegalArgumentException();
+            }
+            if (DirectionNumber == 1) {
+                return "up";
+            } else {
+                return "down";
+            }
 
-		} catch (IllegalArgumentException exception) {
-			System.out.println("1Å`2ÇÃîÕàÕÇ≈ì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB");
-			System.exit(0);
-		}
-		return null;
-	}
+        } catch (IllegalArgumentException exception) {
+            System.out.println("1ÔΩû2„ÅÆÁØÑÂõ≤„ÅßÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static Integer getValidatedDepartureHour() throws Exception {
-		try {
-			System.out.print("èoî≠Ç∑ÇÈéûä‘Çì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅBÅF");
-			int hour = getInputValue();
-			if (hour < 0) {
-				throw new IllegalArgumentException();
-			}
-			return hour;
-		} catch (IllegalArgumentException exception) {
-			System.out.println("0à»è„Ç≈ì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB");
-			System.exit(0);
-		}
-		return null;
-	}
+    private static Integer getValidatedDepartureHour() throws Exception {
+        try {
+            System.out.print("Âá∫Áô∫„Åô„ÇãÊôÇÈñì„ÇíÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇÔºö");
+            int hour = getInputValue();
+            if (hour < 0) {
+                throw new IllegalArgumentException();
+            }
+            return hour;
+        } catch (IllegalArgumentException exception) {
+            System.out.println("0‰ª•‰∏ä„ÅßÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static Integer getValidatedDepartureMinute() throws Exception {
-		try {
-			System.out.print("èoî≠Ç∑ÇÈï™Çì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅBÅF");
-			int minute = getInputValue();
-			if (minute < 0) {
-				throw new IllegalArgumentException();
-			}
-			return minute;
-		} catch (IllegalArgumentException exception) {
-			System.out.println("0à»è„Ç≈ì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢ÅB");
-			System.exit(0);
-		}
-		return null;
-	}
+    private static Integer getValidatedDepartureMinute() throws Exception {
+        try {
+            System.out.print("Âá∫Áô∫„Åô„ÇãÂàÜ„ÇíÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇÔºö");
+            int minute = getInputValue();
+            if (minute < 0) {
+                throw new IllegalArgumentException();
+            }
+            return minute;
+        } catch (IllegalArgumentException exception) {
+            System.out.println("0‰ª•‰∏ä„ÅßÂÖ•Âäõ„Åó„Å¶„Åè„Å†„Åï„ÅÑ„ÄÇ");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static LocalDateTime getValidatedDepartureTime(int hour, int minute) throws Exception {
-		try {
-			return LocalDateTime.of(2022, 3, 4, hour, minute);
-		} catch (DateTimeException exception) {
-			System.out.println("ïsê≥Ç»éûçèÇ≈Ç∑ÅB");
-			System.exit(0);
-		}
-		return null;
-	}
+    private static LocalDateTime getValidatedDepartureTime(int hour, int minute) throws Exception {
+        try {
+            return LocalDateTime.of(2022, 3, 4, hour, minute);
+        } catch (DateTimeException exception) {
+            System.out.println("‰∏çÊ≠£„Å™ÊôÇÂàª„Åß„Åô„ÄÇ");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static String getFormatTime(LocalDateTime time) {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");
-		return format.format(time);
-	}
+    private static String getFormatTime(LocalDateTime time) {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");
+        return format.format(time);
+    }
 }

@@ -12,115 +12,115 @@ import connect.ConnectDatabase;
 
 public class SearchFare {
 
-	public static void main(String[] args) throws Exception {
-		ConnectDatabase connect = new ConnectDatabase();
+    public static void main(String[] args) throws Exception {
+        ConnectDatabase connect = new ConnectDatabase();
 
-		Statement statement = connect.getStatement();
+        Statement statement = connect.getStatement();
 
-		String sql = "SELECT * FROM shinkansen.station";
+        String sql = "SELECT * FROM shinkansen.station";
 
-		ResultSet resultSet = statement.executeQuery(sql);
-		try {
-			while (resultSet.next()) {
-				System.out.print(resultSet.getInt("id") + "." + resultSet.getString("name") + " ");
-			}
-			System.out.println("");
-			System.out.print("o”­’n‚ğ”Ô†‚Å‘I‚ñ‚Å‚Ä‚­‚¾‚³‚¢B:");
-			int inputDepartureStation = getValidatedStationNumber();
+        ResultSet resultSet = statement.executeQuery(sql);
+        try {
+            while (resultSet.next()) {
+                System.out.print(resultSet.getInt("id") + "." + resultSet.getString("name") + " ");
+            }
+            System.out.println("");
+            System.out.print("å‡ºç™ºåœ°ã‚’ç•ªå·ã§é¸ã‚“ã§ã¦ãã ã•ã„ã€‚:");
+            int inputDepartureStation = getValidatedStationNumber();
 
-			System.out.println("");
-			resultSet.absolute(0);
+            System.out.println("");
+            resultSet.absolute(0);
 
-			while (resultSet.next()) {
-				System.out.print(resultSet.getInt("id") + "." + resultSet.getString("name") + " ");
-			}
-			System.out.println("");
+            while (resultSet.next()) {
+                System.out.print(resultSet.getInt("id") + "." + resultSet.getString("name") + " ");
+            }
+            System.out.println("");
 
-			System.out.print("–Ú“I’n‚ğ”Ô†‚Å‘I‚ñ‚Ä‚­‚¾‚³‚¢B:");
-			int inputArriveStation = getValidatedStationNumber();
+            System.out.print("ç›®çš„åœ°ã‚’ç•ªå·ã§é¸ã‚“ã¦ãã ã•ã„ã€‚:");
+            int inputArriveStation = getValidatedStationNumber();
 
-			System.out.println("");
+            System.out.println("");
 
-			resultSet.absolute(inputDepartureStation);
-			double depertureKmFromTokyo = resultSet.getDouble("km_from_tokyo");
-			boolean depertureIsNozomi = resultSet.getBoolean("nozomi");
+            resultSet.absolute(inputDepartureStation);
+            double depertureKmFromTokyo = resultSet.getDouble("km_from_tokyo");
+            boolean depertureIsNozomi = resultSet.getBoolean("nozomi");
 
-			resultSet.absolute(inputArriveStation);
-			double arriveKmFromTokyo = resultSet.getDouble("km_from_tokyo");
-			boolean arriveIsNozomi = resultSet.getBoolean("nozomi");
+            resultSet.absolute(inputArriveStation);
+            double arriveKmFromTokyo = resultSet.getDouble("km_from_tokyo");
+            boolean arriveIsNozomi = resultSet.getBoolean("nozomi");
 
-			double km = Math.round(depertureKmFromTokyo - arriveKmFromTokyo);
-			if (km <= -1) {
-				km *= -1;
-			}
-			Fare fare = new Fare();
-			ReservedSeat reservedSeat1 = new ReservedSeat(1, "©—RÈ");
-			ReservedSeat reservedSeat2 = new ReservedSeat(2, "w’èÈ(‚Ğ‚©‚èA‚±‚¾‚Ü)");
-			ReservedSeat reservedSeat3 = new ReservedSeat(3, "w’èÈ(‚Ì‚¼‚İ)");
-			List<ReservedSeat> seats = new ArrayList<>();
-			seats = Arrays.asList(reservedSeat1, reservedSeat2, reservedSeat3);
-			for (ReservedSeat seat : seats) {
-				if (!depertureIsNozomi && seat.getId() == 3 || !arriveIsNozomi && seat.getId() == 3) {
-					break;
-				}
-				System.out.print(seat.getId() + "." + seat.getName() + " ");
-			}
-			System.out.println("");
-			System.out.print("ÀÈ‚Ìí—Ş‚ğ”Ô†‚Å‘I‚ñ‚Å‚Ä‚­‚¾‚³‚¢B:");
-			int inputSeat = getValidatedSeat(depertureIsNozomi, arriveIsNozomi);
-			seats.get(inputSeat - 1).setTicketPrice(km);
-			int limitedTicketPrice = seats.get(inputSeat - 1).getLimitedTicket(km, inputSeat);
-			int allPrice = limitedTicketPrice + fare.fare(km);
+            double km = Math.round(depertureKmFromTokyo - arriveKmFromTokyo);
+            if (km <= -1) {
+                km *= -1;
+            }
+            Fare fare = new Fare();
+            ReservedSeat reservedSeat1 = new ReservedSeat(1, "è‡ªç”±å¸­");
+            ReservedSeat reservedSeat2 = new ReservedSeat(2, "æŒ‡å®šå¸­(ã²ã‹ã‚Šã€ã“ã ã¾)");
+            ReservedSeat reservedSeat3 = new ReservedSeat(3, "æŒ‡å®šå¸­(ã®ãã¿)");
+            List<ReservedSeat> seats = new ArrayList<>();
+            seats = Arrays.asList(reservedSeat1, reservedSeat2, reservedSeat3);
+            for (ReservedSeat seat : seats) {
+                if (!depertureIsNozomi && seat.getId() == 3 || !arriveIsNozomi && seat.getId() == 3) {
+                    break;
+                }
+                System.out.print(seat.getId() + "." + seat.getName() + " ");
+            }
+            System.out.println("");
+            System.out.print("åº§å¸­ã®ç¨®é¡ã‚’ç•ªå·ã§é¸ã‚“ã§ã¦ãã ã•ã„ã€‚:");
+            int inputSeat = getValidatedSeat(depertureIsNozomi, arriveIsNozomi);
+            seats.get(inputSeat - 1).setTicketPrice(km, inputDepartureStation, inputArriveStation);
+            int limitedTicketPrice = seats.get(inputSeat - 1).getLimitedTicket(km, inputSeat);
+            int allPrice = limitedTicketPrice + fare.fare(km);
 
-			System.out.print("æÔŒ”:" + fare.fare(km) + "‰~ " + seats.get(inputSeat - 1).getName() + ":"
-					+ limitedTicketPrice + " ‡Œv:" + allPrice);
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-		}
-		connect.closeConnection();
-	}
+            System.out.print("ä¹—è»Šåˆ¸:" + fare.fare(km) + "å†† " + seats.get(inputSeat - 1).getName() + ":"
+                    + limitedTicketPrice + " åˆè¨ˆ:" + allPrice);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        connect.closeConnection();
+    }
 
-	private static Integer getInputValue() throws Exception {
-		try {
-			return new java.util.Scanner(System.in).nextInt();
-		} catch (InputMismatchException exception) {
-			System.out.println("”š‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
-			System.exit(0);
-		}
-		return null;
-	}
+    private static Integer getInputValue() throws Exception {
+        try {
+            return new java.util.Scanner(System.in).nextInt();
+        } catch (InputMismatchException exception) {
+            System.out.println("æ•°å­—ã§å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static Integer getValidatedStationNumber() throws Exception {
-		try {
-			int stationNumber = getInputValue();
-			if (stationNumber < 1 || 17 < stationNumber) {
-				throw new IllegalArgumentException();
-			}
-			return stationNumber;
-		} catch (IllegalArgumentException exception) {
-			System.out.println("1`17‚Ì”ÍˆÍ‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
-			System.exit(0);
-		}
-		return null;
-	}
+    private static Integer getValidatedStationNumber() throws Exception {
+        try {
+            int stationNumber = getInputValue();
+            if (stationNumber < 1 || 17 < stationNumber) {
+                throw new IllegalArgumentException();
+            }
+            return stationNumber;
+        } catch (IllegalArgumentException exception) {
+            System.out.println("1ï½17ã®ç¯„å›²ã§å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
+            System.exit(0);
+        }
+        return null;
+    }
 
-	private static Integer getValidatedSeat(boolean depertureIsNozomi, boolean arriveIsNozomi) throws Exception {
-		try {
-			int seat = getInputValue();
-			if (seat < 1 || 3 < seat) {
-				throw new IllegalArgumentException();
-			}
-			if (seat < 1 && !depertureIsNozomi || !arriveIsNozomi && 2 < seat) {
-				throw new Exception();
-			}
-			return seat;
-		} catch (IllegalArgumentException exception) {
-			System.out.println("1`3‚Ì”ÍˆÍ‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
-			System.exit(0);
-		} catch (Exception excepition) {
-			System.out.println("‚Ì‚¼‚İ‚ª~‚Ü‚ç‚È‚¢‰w‚ªŠÜ‚Ü‚ê‚Ä‚Ü‚·B(‚Ì‚¼‚İ’âÔ‰wF“Œ‹A•iìAV‰¡•lA–¼ŒÃ‰®A‹“sAV‘åã)");
-			System.exit(0);
-		}
-		return null;
-	}
+    private static Integer getValidatedSeat(boolean depertureIsNozomi, boolean arriveIsNozomi) throws Exception {
+        try {
+            int seat = getInputValue();
+            if (seat < 1 || 3 < seat) {
+                throw new IllegalArgumentException();
+            }
+            if (seat < 1 && !depertureIsNozomi || !arriveIsNozomi && 2 < seat) {
+                throw new Exception();
+            }
+            return seat;
+        } catch (IllegalArgumentException exception) {
+            System.out.println("1ï½3ã®ç¯„å›²ã§å…¥åŠ›ã—ã¦ãã ã•ã„ã€‚");
+            System.exit(0);
+        } catch (Exception excepition) {
+            System.out.println("ã®ãã¿ãŒæ­¢ã¾ã‚‰ãªã„é§…ãŒå«ã¾ã‚Œã¦ã¾ã™ã€‚(ã®ãã¿åœè»Šé§…ï¼šæ±äº¬ã€å“å·ã€æ–°æ¨ªæµœã€åå¤å±‹ã€äº¬éƒ½ã€æ–°å¤§é˜ª)");
+            System.exit(0);
+        }
+        return null;
+    }
 }
